@@ -31,16 +31,19 @@
   .ib.on{ color:var(--acc); opacity:1; }
   .ib svg{ width:15px; height:15px; }
 
-  .cyc{ margin-left:8px; height:20px; padding:0 8px; border:1px solid var(--soft); border-radius:10px; background:rgba(255,255,255,.5);
-    color:var(--sub); font:inherit; font-size:10.5px; font-weight:700; cursor:pointer; white-space:nowrap; flex:none; }
-  .cyc:hover{ color:var(--acc); border-color:var(--acc); background:#fff; }
-  .cyc.custom{ color:var(--acc); border-color:var(--acc); }
+  .cyc{ margin-left:12px; padding:0; border:0; background:none; color:var(--sub); font:inherit; font-size:12px; font-weight:600;
+    line-height:inherit; cursor:pointer; white-space:nowrap; flex:none; }
+  .cyc:hover{ color:var(--acc); }
+  .cyc.custom{ color:var(--acc); }
+  .cyc.off{ opacity:.4; cursor:not-allowed; }
+  .cyc.off:hover{ color:var(--sub); }
   body.m-pw .cyc{ visibility:hidden; }
   #modal{ position:fixed; inset:0; background:rgba(0,0,0,.28); display:none; align-items:center; justify-content:center; z-index:10; }
   #modal.on{ display:flex; }
-  #modal .box{ width:240px; background:#fff; border-radius:6px; padding:16px 16px 12px; box-shadow:0 6px 24px rgba(0,0,0,.18); }
+  #modal .box{ width:276px; word-break:keep-all; background:#fff; border-radius:6px; padding:16px 16px 12px; box-shadow:0 6px 24px rgba(0,0,0,.18); }
   #modal p{ font-size:13px; font-weight:600; color:#2a2a2a; line-height:1.5; white-space:pre-line; }
   #modal .sub{ font-size:11px; font-weight:400; color:#777; margin-top:4px; }
+  #modal.single .no{ display:none; }
   #modal .btns{ display:flex; justify-content:flex-end; gap:6px; margin-top:14px; }
   #modal button{ height:28px; padding:0 12px; border-radius:3px; font:inherit; font-size:12px; font-weight:700; cursor:pointer; }
   #modal .no{ border:1px solid #ddd; background:#fff; color:#555; }
@@ -88,10 +91,6 @@
   #fEnd input:focus{ padding-right:8px; }
   #fEnd input:focus ~ .fdiff{ display:none; }
   #fEnd{ flex:1; min-width:0; }
-  #go{ height:30px; padding:0 11px; border:0; border-radius:3px; background:var(--acc); color:#fff;
-    font:inherit; font-size:12px; font-weight:700; cursor:pointer; flex:none; }
-  #go:disabled{ opacity:.35; cursor:default; }
-  body.saved #go{ display:none; }
   body.m-pw .nick, body.m-pw #bOpen{ visibility:hidden; }
   body.m-pw #others{ display:none !important; }
 
@@ -130,22 +129,22 @@
 <body>
 <div id="app">
   <div class="top">
-    <div class="nick" id="nick" title="눌러서 닉네임 바꾸기"></div>
+    <div class="nick" id="nick" title="클릭해서 닉네임을 변경합니다."></div>
     <button class="cyc" id="bCyc" title="시작 시간을 변경하고 싶으면 누릅니다. 참가자 중 한 사람만 누릅니다.">지금 시작</button>
     <div class="icons">
-      <button class="ib" id="bPin" title="항상 위에 띄우기 (켜기/끄기)">
+      <button class="ib" id="bPin" title="고정 기능을 켜거나 끕니다.">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6 2h4l-.6 4 2.6 2.5H4L6.6 6z"/><path d="M8 8.5V14" stroke-linecap="round"/></svg></button>
-      <button class="ib" id="bBell" title="전환 10초 전 깜빡임·카운트다운 소리와 전환음 (켜기/끄기)">
+      <button class="ib" id="bBell" title="알람음을 켜거나 끕니다.">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 11V7a4 4 0 0 1 8 0v4l1 1.5H3z"/><path d="M6.5 14h3" stroke-linecap="round"/></svg></button>
-      <button class="ib" id="bRef" title="새로고침 (시간 맞추기·기록 다시 받기)">
+      <button class="ib" id="bRef" title="새로 불러옵니다.">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M13 8a5 5 0 1 1-1.5-3.6"/><path d="M12 1.8v3h-3"/></svg></button>
-      <button class="ib" id="bOpen" title="오늘 함께 쓰는 사람 보기">
+      <button class="ib" id="bOpen" title="함께 쓰는 사람 목록을 펼치거나 접습니다.">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path id="chev" d="M4 6l4 4 4-4"/></svg></button>
     </div>
   </div>
 
   <div class="clockwrap">
-    <svg id="clock" viewBox="0 0 200 200"><title>정각~50분 집중, 50분~정각 휴식. 색칠된 부채꼴이 이번 단계의 남은 시간이에요</title>
+    <svg id="clock" viewBox="0 0 200 200">
       <circle class="face" cx="100" cy="100" r="97"/>
       <path class="sector" id="sector"/>
       <g id="ticks"></g>
@@ -155,22 +154,21 @@
       <g class="hand" id="hS"><line class="h-s" x1="100" y1="100" x2="100" y2="15"/></g>
       <circle class="pin2" cx="100" cy="100" r="3.4"/><circle class="pin1" cx="100" cy="100" r="1.4"/>
       <circle class="disc" cx="100" cy="100" r="44"/>
-      <text class="ct left" id="tLeft" x="100" y="80"></text>
-      <text class="ct lbl" id="tLbl" x="100" y="100">집중</text>
-      <text class="ct day" id="tDay" x="100" y="120"></text>
+      <text class="ct left" id="tLeft" x="100" y="80"><title>이번 세션 남은 시간입니다.</title></text>
+      <text class="ct lbl" id="tLbl" x="100" y="100"><title>현재 세션입니다.</title></text>
+      <text class="ct day" id="tDay" x="100" y="120"><title>오늘의 글자수 합산입니다.</title></text>
     </svg>
   </div>
 
   <div class="sess">
     <span class="msg" id="msg"></span>
     <form class="inrow" id="form" autocomplete="off">
-      <label class="fld" id="fEnd"><input id="inp" inputmode="numeric" spellcheck="false"><b class="fdiff" id="sDiff" title="이번 세션에 쓴 글자수"></b></label>
-      <button id="go">입력</button>
-    </form>
+      <label class="fld" id="fEnd"><input id="inp" inputmode="numeric" spellcheck="false"><b class="fdiff" id="sDiff" title="이번 세션에 쓴 글자수입니다."></b></label>
+          </form>
   </div>
 
   <div id="others">
-    <div class="cols"><span title="내 닉네임 줄을 더블클릭하면 시작·끝 글자수를 고칠 수 있어요">오늘 참여</span><span class="v">시작</span><span class="v" title="그 세션이 끝났을 때 전체 글자수">끝</span><span class="w" title="그 세션에 쓴 글자수">차이</span><span class="v s" title="오늘 그 세션까지 쓴 글자수 합계">합산</span></div>
+    <div class="cols"><span title="내 기록을 더블클릭하면 수정할 수 있습니다.">오늘 참여</span><span class="v">시작</span><span class="v" title="그 세션이 끝났을 때의 전체 글자수입니다.">끝</span><span class="w" title="그 세션에 쓴 글자수입니다.">차이</span><span class="v s" title="오늘 그 세션까지 쓴 글자수 합계입니다.">합산</span></div>
     <div id="list"></div>
   </div>
 </div>
@@ -210,7 +208,11 @@ function fit(force){
 const now = () => Date.now() + offset;
 let cycOff = 0, anchor = null, cycAt = null;   // 공용 사이클 기준(null = 정시)
 const slotOf = t => Math.floor((t - cycOff) / PERIOD) * PERIOD + cycOff;
-const dayStart = t => Math.floor((t + KST) / DAY) * DAY - KST;
+const DB = 5 * 3600e3 + 5 * MIN;   // 날짜 기준: 오전 5시 5분
+const dayStart = t => Math.floor((t + KST - DB) / DAY) * DAY - KST + DB;
+const dayFrom = t => dayStart(t) - GRACE;   // 오늘에 속하는 세션의 시작(05:00 세션부터)
+const kstMin = t => Math.floor(((t + KST) % DAY) / MIN);
+const lateNight = t => { const m = kstMin(t); return m >= 230 && m < 305; };   // 03:50~05:05
 const hm = t => { const d = new Date(t + KST); return String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0'); };
 const num = n => n == null ? '' : Number(n).toLocaleString('ko-KR');
 const sgn = n => n < 0 ? '(' + Math.abs(n).toLocaleString('ko-KR') + ')' : '+' + n.toLocaleString('ko-KR');
@@ -262,6 +264,8 @@ function tick(){
   const left = (focus ? FOCUS : PERIOD) - into, ls = Math.ceil(left / 1000);
   const sec = Math.floor(t / 1000);
   if (sec !== lastSec){
+    if (effAnchor() !== anchor) setAnchor(effAnchor(), false);
+    nightCheck(t);
     hands(t);
     const m0 = ((slot + KST) / MIN) % 60;   // 세션 시작 분(정시면 0)
     $('sector').setAttribute('d', wedge(m0 + into / MIN, m0 + (focus ? 50 : 60)));
@@ -277,7 +281,7 @@ function tick(){
   if (lastPhase && lastPhase !== ph){
     load();
   }
-  const g = (into < GRACE) + '' + editable(t);
+  const g = (into < GRACE) + '' + editable(t) + lateNight(t) + String(dayStart(t));
   if (tick.g !== g){ tick.g = g; renderSession(); }
   lastPhase = ph;
 }
@@ -335,30 +339,37 @@ async function rpc(name, body){
 async function load(){
   if (!pw) return;
   try{
-    const since = dayStart(now()) - DAY;   // 전날 1등 계산용으로 어제부터
+    const since = dayFrom(now()) - DAY;   // 전날 1등 계산용으로 어제부터
     const [res, cyc] = await Promise.all([rpc('pmpm_list', { pw, since: isoOf(since) }), rpc('pmpm_cycle_get', { pw })]);
     applyCycle(cyc && cyc[0]);
     rows = res.map(r => ({ nick: r.nick, slot: Date.parse(r.slot_start), start: r.start_count, end: r.end_count }));
     renderSession(); renderList();
   }catch(e){ if (e.message !== 'pw') flash('연결 안 됨'); }
 }
+let anchorRaw = null;
 function applyCycle(c){
-  const a = c && c.anchor ? Date.parse(c.anchor) : null;
   const at = c ? c.changed_at : null;
   const first = cycAt === null;
   if (!first && at === cycAt) return;
   cycAt = at || '';
-  if (a === anchor && !first) return;
+  anchorRaw = c && c.anchor ? Date.parse(c.anchor) : null;
+  setAnchor(effAnchor(), !first);
+}
+// 지금 시작은 그날(오전 5시 5분 이후)에 누른 것만 유효. 날짜가 바뀌면 정시로 돌아감
+const effAnchor = () => anchorRaw !== null && anchorRaw >= dayStart(now()) ? anchorRaw : null;
+function setAnchor(a, notify){
+  const changed = a !== anchor;
   anchor = a;
   cycOff = a === null ? 0 : ((a % PERIOD) + PERIOD) % PERIOD;
   $('bCyc').textContent = a === null ? '지금 시작' : '정시 시작';
   $('bCyc').classList.toggle('custom', a !== null);
+  if (!changed && !notify) return;
   unschedule(); lastPhase = null; tick.g = null; lastSec = null; tick();
-  if (!first) flash(a === null ? '정시 시작으로 바뀌었어요' : `${hm(a)} 시작으로 바뀌었어요`);
+  if (notify && changed) flash(a === null ? '정시 시작으로 바뀌었어요' : `${hm(a)} 시작으로 바뀌었어요`);
 }
 const myRows = () => rows.filter(r => r.nick === nick);
 const rowFor = T => myRows().find(r => r.slot === T);
-const todayMine = () => myRows().filter(r => r.slot >= dayStart(now())).sort((a, b) => a.slot - b.slot);
+const todayMine = () => myRows().filter(r => r.slot >= dayFrom(now())).sort((a, b) => a.slot - b.slot);
 // 세션 시작값: 직전 세션의 끝값(없으면 오늘 시작 글자수)
 function defStart(T){
   const mine = todayMine(), prev = mine.filter(r => r.slot < T).pop();
@@ -375,18 +386,18 @@ function renderSession(){
   $('sDiff').textContent = '';
   const inp = $('inp');
   let ph = '', tip = '';
-  if (mode === 'pw') ph = '공용 비밀번호';
-  else if (mode === 'nick') ph = '닉네임 입력 후 엔터';
-  else if (!started){ ph = '오늘의 시작 글자수를 입력하세요'; tip = '오늘 쓰기 시작할 때 원고의 전체 글자수'; }
-  else if (!ed){ ph = '집중 세션 종료 후 글자수를 입력하세요'; tip = '입력은 휴식이 시작될 때부터 다음 집중 시작 후 5분까지 열려요'; }
-  else if (done){ ph = '입력값을 수정하려면 하단 기록을 더블클릭하세요'; tip = '눌러서 기록 목록 열기'; }
-  else { ph = '글자수를 입력하세요'; tip = '지금 원고의 전체 글자수 (이번 세션 차이는 자동 계산)'; }
+  if (mode === 'pw'){ ph = '공용 비밀번호를 입력하세요.'; tip = '공용 비밀번호를 입력합니다.'; }
+  else if (mode === 'nick'){ ph = '닉네임을 입력하세요.'; tip = '닉네임을 입력하고 엔터를 누릅니다.'; }
+  else if (!started){ ph = '오늘의 시작 글자수를 입력하세요.'; tip = '오늘 쓰기 시작할 때 원고의 전체 글자수를 입력합니다.'; }
+  else if (!ed){ ph = '집중 세션 종료 후 글자수를 입력하세요.'; tip = '휴식이 시작될 때부터 다음 집중 시작 후 5분까지 입력할 수 있습니다.'; }
+  else if (done && lateNight(now())){ ph = '오전 5시 5분에 날짜 기준이 초기화돼요.'; tip = '오전 5시 5분에 날짜 기준이 초기화됩니다. 클릭하면 기록 목록이 열립니다.'; }
+  else if (done){ ph = '입력값을 수정하려면 하단 기록을 더블클릭하세요.'; tip = '클릭하면 기록 목록이 열립니다.'; }
+  else { ph = '글자수를 입력하세요.'; tip = '지금 원고의 전체 글자수를 입력하고 엔터를 누릅니다. 이번 세션 차이는 자동으로 계산됩니다.'; }
   inp.placeholder = ph; inp.title = tip; $('fEnd').title = tip;
   const lockIt = mode === 'count' && started && (!ed || done);
-  document.body.classList.toggle('saved', mode === 'count' && started && ed && !!done);
-  inp.disabled = lockIt; $('go').disabled = lockIt;
+  inp.disabled = lockIt;
   // 오늘 합산(시계 안)
-  const d0 = dayStart(now());
+  const d0 = dayFrom(now());
   const day = myRows().filter(x => x.slot >= d0).reduce((a, x) => a + x.end - x.start, 0);
   $('tDay').textContent = mode === 'count' ? (day < 0 ? '(' + Math.abs(day).toLocaleString('ko-KR') + ')' : day.toLocaleString('ko-KR')) : '';
 }
@@ -400,7 +411,7 @@ function topOf(list){
   return best;
 }
 function renderList(){
-  const d0 = dayStart(now());
+  const d0 = dayFrom(now());
   const today = rows.filter(r => r.slot >= d0);
   const king = topOf(today), champ = topOf(rows.filter(r => r.slot >= d0 - DAY && r.slot < d0));
   // 닉네임별 누적 합산
@@ -422,11 +433,11 @@ function renderList(){
     groups.get(slot).sort((a, b) => (b.end - b.start) - (a.end - a.start)).forEach(r => {
       const el = document.createElement('div');
       el.className = 'r' + (r.nick === nick ? ' me' : '');
-      if (r.nick === nick){ el.title = '더블클릭해서 시작·끝 글자수 고치기'; el.addEventListener('dblclick', () => editRow(el, r)); }
+      if (r.nick === nick){ el.title = '내 기록을 더블클릭하면 수정할 수 있습니다.'; el.addEventListener('dblclick', () => editRow(el, r)); }
       const n = document.createElement('span'); n.className = 'n';
-      if (r.nick === king) n.insertAdjacentHTML('beforeend', '<span class="one" title="오늘 지금 1위">1</span>');
+      if (r.nick === king) n.insertAdjacentHTML('beforeend', '<span class="one" title="오늘 현재 1위입니다.">1</span>');
       const t = document.createElement('span'); t.className = 't'; t.textContent = r.nick; n.append(t);
-      if (r.nick === champ) n.insertAdjacentHTML('beforeend', '<span title="어제 1위" style="display:flex">' + MEDAL + '</span>');
+      if (r.nick === champ) n.insertAdjacentHTML('beforeend', '<span title="어제 1위입니다." style="display:flex">' + MEDAL + '</span>');
       el.append(n);
       const only = r.start === r.end;
       [[num(r.start), 'v'], [only ? '–' : num(r.end), only ? 'v na' : 'v'], [only ? '–' : sgn(r.end - r.start), only ? 'v na w' : 'v d w'], [sgn(cum.get(r.nick + '|' + r.slot)), 'v s']].forEach(([txt, c]) => {
@@ -452,7 +463,6 @@ function setMode(m){
   inp.type = m === 'pw' ? 'password' : 'text';
   if (m === 'count') inp.setAttribute('inputmode', 'numeric'); else inp.removeAttribute('inputmode');
   inp.value = m === 'nick' ? nick : '';
-  $('go').textContent = m === 'count' ? '입력' : '확인';
   document.body.classList.toggle('m-pw', m === 'pw');
   document.body.classList.toggle('m-nick', m === 'nick');
   renderSession();
@@ -480,7 +490,7 @@ $('form').addEventListener('submit', async e => {
   try{
     if (!todayMine().length){
       // 오늘 시작 글자수: 지금 시각의 세션에 시작=끝으로 기록
-      let T = target(); if (T < dayStart(now())) T = slotOf(now());
+      let T = target(); if (T < dayFrom(now())) T = slotOf(now());
       await put(T, n, n);
     } else {
       if (!editable()){ flash('지금은 입력 시간이 아니에요'); return; }
@@ -538,9 +548,10 @@ function setOpen(v){
   if (v) load();
   fit();
 }
-function ask(text, sub){
+function ask(text, sub, single){
   return new Promise(res => {
     $('mText').textContent = text; $('mSub').textContent = sub || '';
+    $('modal').classList.toggle('single', !!single);
     $('modal').classList.add('on');
     const done = v => { $('modal').classList.remove('on'); $('mYes').onclick = $('mNo').onclick = $('modal').onclick = null; document.removeEventListener('keydown', key); res(v); };
     const key = e => { if (e.key === 'Escape') done(false); if (e.key === 'Enter'){ e.preventDefault(); done(true); } };
@@ -551,8 +562,19 @@ function ask(text, sub){
     $('mYes').focus();
   });
 }
+function nightCheck(t){
+  const late = lateNight(t), b = $('bCyc');
+  b.classList.toggle('off', late);
+  b.title = late ? '3시 50분부터 5시 5분까지 [지금 시작]을 이용할 수 없습니다.' : '시작 시간을 변경하고 싶으면 누릅니다. 참가자 중 한 사람만 누릅니다.';
+  // 03:50 이후 하루 한 번 안내
+  if (late && mode === 'count' && !$('modal').classList.contains('on')){
+    const key = String(dayStart(t));
+    if (st.get('night', '') !== key){ st.set('night', key); ask('오전 5시 5분에 날짜 기준이 초기화돼요.', '그 전까지 입력한 기록은 오늘 기록으로 남아요.', true); }
+  }
+}
 $('bCyc').onclick = async () => {
   if (mode === 'pw') return;
+  if (lateNight(now())){ flash('3시 50분부터 5시 5분까지는 쓸 수 없어요'); return; }
   const toNow = anchor === null;
   const ok = toNow
     ? await ask('진짜 지금 시작해요?', '모든 참가자의 타이머가 지금부터 50분 집중으로 바뀌어요.')
