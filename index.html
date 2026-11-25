@@ -200,7 +200,8 @@ function fit(force){
     if (!force && h === fitH) return;
     fitH = h;
     const dw = WIDTH - innerWidth, dh = h - innerHeight;
-    if (Math.abs(dw) > 3 || Math.abs(dh) > 3) win(`resize?dw=${dw}&dh=${dh}`);
+    // force일 때는 차이가 없어도 보냄 → exe가 지금 크기를 '고정할 크기'로 기억
+    if (force || Math.abs(dw) > 3 || Math.abs(dh) > 3) win(`resize?dw=${Math.abs(dw) > 3 ? dw : 0}&dh=${Math.abs(dh) > 3 ? dh : 0}`);
   }, 60);
 }
 
