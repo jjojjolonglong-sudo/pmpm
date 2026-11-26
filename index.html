@@ -45,8 +45,10 @@
   .badge{ flex:none; font-size:12px; line-height:1; font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif; }
   .badge.mine{ cursor:pointer; border-radius:3px; padding:1px; }
   .badge.mine:hover{ background:rgba(255,255,255,.8); }
-  #pick, #help{ position:fixed; inset:0; background:rgba(0,0,0,.28); display:none; align-items:center; justify-content:center; z-index:12; }
-  #pick.on, #help.on{ display:flex; }
+  #pick{ position:fixed; inset:0; background:rgba(0,0,0,.28); display:none; align-items:center; justify-content:center; z-index:12; }
+  #pick.on{ display:flex; }
+  #help{ position:fixed; inset:0; background:#fff; display:none; z-index:12; overflow-y:auto; cursor:pointer; overscroll-behavior:none; }
+  #help.on{ display:block; }
   #pick .box{ width:244px; background:#fff; border-radius:6px; padding:14px; box-shadow:0 6px 24px rgba(0,0,0,.18); text-align:center; }
   #pick .cap{ font-size:12px; font-weight:700; color:#333; margin-bottom:10px; }
   #pick .grid{ display:grid; grid-template-columns:repeat(5, 1fr); gap:4px; }
@@ -54,13 +56,11 @@
     font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif; }
   #pick .grid button:hover{ background:#f6f6f6; }
   #pick .grid button.sel{ border-color:var(--acc); background:#fff; }
-  #help .box{ width:304px; background:#fff; border-radius:6px; padding:16px 16px 10px; box-shadow:0 6px 24px rgba(0,0,0,.18); word-break:keep-all; }
-  #help h3{ font-size:14px; font-weight:700; color:#2a2a2a; text-align:center; margin-bottom:10px; }
-  #help ol{ padding-left:17px; }
-  #help li{ font-size:11.5px; line-height:1.6; color:#444; margin-bottom:5px; }
+  #help .box{ padding:18px 18px 16px; }
+  #help h3{ font-size:15px; font-weight:700; color:#2a2a2a; text-align:center; margin-bottom:12px; }
+  #help ol{ padding-left:18px; }
+  #help li{ font-size:12.5px; line-height:1.65; color:#444; margin-bottom:6px; text-align:justify; word-break:break-all; }
   #help li b{ color:#222; font-weight:700; }
-  #help .close{ display:block; margin:6px auto 0; border:0; background:none; color:#999; font:inherit; font-size:11.5px; cursor:pointer; }
-  #help .close:hover{ color:#555; }
   #dayModal{ position:fixed; inset:0; background:rgba(0,0,0,.28); display:none; align-items:center; justify-content:center; z-index:11; }
   #dayModal.on{ display:flex; }
   #dayModal .box{ width:276px; background:#fff; border-radius:6px; padding:18px 18px 12px; box-shadow:0 6px 24px rgba(0,0,0,.18);
@@ -209,7 +209,7 @@
   </div>
 </div>
 <div id="pick"><div class="box"><div class="cap">어제 1위 표시를 골라 주세요</div><div class="grid" id="pickGrid"></div></div></div>
-<div id="help"><div class="box">
+<div id="help" title="아무 데나 누르면 닫힙니다."><div class="box">
   <h3>사용법</h3>
   <ol>
     <li>왼쪽 위 <b>닉네임</b>을 눌러 닉네임을 정합니다.</li>
@@ -222,7 +222,6 @@
     <li><b>오전 5시</b>에 새 날이 시작됩니다. 그 전의 새벽 작업은 전날 기록입니다.</li>
     <li>제작자는 영리 추구나 홍보 등의 목적이 아닌 '네카리' 방 친구들과 집필 동기 부여를 위해 앱을 만들었어요. 이 앱은 우리끼리만 써요. 불편한 점은 대부분 해결되니 제작자에게 문의해 주세요.</li>
   </ol>
-  <button class="close" id="helpClose">닫기</button>
 </div></div>
 <div id="dayModal"><div class="box">
   <h3>날짜가 바뀌고 집중 세션이 시작됐어요.</h3>
@@ -672,7 +671,7 @@ function dayCheck(t){
 function dayFit(){
   requestAnimationFrame(() => {
     const ov = ['dayModal', 'help', 'pick'].map($).find(x => x.classList.contains('on'));
-    $('app').style.minHeight = ov ? (ov.querySelector('.box').offsetHeight + 28) + 'px' : '';
+    $('app').style.minHeight = ov ? (ov.querySelector('.box').offsetHeight + (ov.id === 'help' ? 0 : 28)) + 'px' : '';
     fit(true);
   });
 }
@@ -725,8 +724,7 @@ function openPick(){
 }
 $('pick').onclick = e => { if (e.target === $('pick')){ $('pick').classList.remove('on'); dayFit(); } };
 $('bHelp').onclick = () => { $('help').classList.add('on'); dayFit(); };
-$('helpClose').onclick = () => { $('help').classList.remove('on'); dayFit(); };
-$('help').onclick = e => { if (e.target === $('help')){ $('help').classList.remove('on'); dayFit(); } };
+$('help').onclick = () => { $('help').classList.remove('on'); dayFit(); };   // 아무 데나 누르면 닫힘
 document.addEventListener('keydown', e => { if (e.key === 'Escape') ['help', 'pick'].forEach(id => { if ($(id).classList.contains('on')){ $(id).classList.remove('on'); dayFit(); } }); });
 
 $('bCyc').onclick = async () => {
