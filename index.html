@@ -21,7 +21,7 @@
 
   /* 상단 */
   .top{ display:flex; align-items:center; height:32px; padding:6px 8px 0 12px; }
-  .nick{ font-size:12px; font-weight:600; color:var(--sub); cursor:pointer; max-width:150px;
+  .nick{ font-size:12px; font-weight:600; color:var(--sub); cursor:pointer; max-width:90px;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap; border-bottom:1px dashed transparent; }
   .nick:hover{ color:var(--ink); border-bottom-color:var(--sub); }
   .icons{ margin-left:auto; display:flex; gap:2px; }
@@ -36,6 +36,7 @@
   .cyc:hover{ color:var(--acc); }
   .cyc.custom{ color:var(--acc); }
   body.m-pw .cyc{ visibility:hidden; }
+  .cyc + .cyc{ margin-left:10px; }
   #modal{ position:fixed; inset:0; background:rgba(0,0,0,.28); display:none; align-items:center; justify-content:center; z-index:10; }
   #modal.on{ display:flex; }
   #modal .box{ width:276px; word-break:keep-all; background:#fff; border-radius:6px; padding:16px 16px 12px; box-shadow:0 6px 24px rgba(0,0,0,.18); }
@@ -164,6 +165,7 @@
 <div id="app">
   <div class="top">
     <div class="nick" id="nick" title="클릭해서 닉네임을 변경합니다."></div>
+    <button class="cyc" id="bExp" title="내 기록 전체를 파일로 받고, 클립보드에도 복사합니다. 엑셀이나 구글 시트에 붙여넣을 수 있습니다.">기록 받기</button>
     <button class="cyc" id="bCyc" title="시작 시간을 변경하고 싶으면 누릅니다. 참가자 중 한 사람만 누릅니다.">지금 시작</button>
     <div class="icons">
       <button class="ib" id="bHelp" title="사용법을 봅니다.">
@@ -724,6 +726,35 @@ $('pick').onclick = e => { if (e.target === $('pick')){ $('pick').classList.remo
 $('bHelp').onclick = () => { $('help').classList.add('on'); dayFit(); };
 $('help').onclick = () => { $('help').classList.remove('on'); dayFit(); };   // 아무 데나 누르면 닫힘
 document.addEventListener('keydown', e => { if (e.key === 'Escape') ['help', 'pick'].forEach(id => { if ($(id).classList.contains('on')){ $(id).classList.remove('on'); dayFit(); } }); });
+
+// 내 기록 전체 받기: CSV 파일(엑셀용) + 클립보드(탭 구분, 시트에 붙여넣기용)
+$('bExp').onclick = async () => {
+  if (mode !== 'count' || !nick) return;
+  try{
+    const list = (await rpc('pmpm_mine', { pw, p_nick: nick }) || [])
+      .map(r => ({ slot: Date.parse(r.slot_start), start: r.start_count, end: r.end_count }));
+    if (!list.length){ flash('아직 기록이 없어요'); return; }
+    const ymd = t => { const d = new Date(t + KST); return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-' + String(d.getUTCDate()).padStart(2, '0'); };
+    const head = ['닉네임', '날짜', '세션(시작시간)', '시작', '끝', '차이', '합산'];
+    const out = [head]; const run = new Map();
+    list.forEach(r => {
+      const day = dayStart(r.slot), only = r.start === r.end && !run.has(day);
+      const diff = only ? 0 : r.end - r.start, cum = (run.get(day) || 0) + diff;
+      run.set(day, cum);
+      out.push([nick, ymd(day), hm(r.slot), r.start, only ? '' : r.end, only ? '' : diff, cum]);
+    });
+    const tsv = out.map(a => a.join('\t')).join('\r\n');
+    const csv = '\ufeff' + out.map(a => a.map(v => /[",\r\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : v).join(',')).join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = `pmpm_${nick}_${ymd(now()).replace(/-/g, '')}.csv`;
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    let copied = false;
+    try{ await Promise.race([navigator.clipboard.writeText(tsv).then(() => copied = true), new Promise(r => setTimeout(r, 1500))]); }catch(e){}
+    flash(copied ? '파일을 받고 클립보드에도 복사했어요' : '파일을 받았어요');
+  }catch(err){ if (err.message !== 'pw') flash('받지 못했어요'); }
+};
 
 $('bCyc').onclick = async () => {
   if (mode === 'pw') return;
