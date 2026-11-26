@@ -42,6 +42,25 @@
   #modal p{ font-size:13px; font-weight:600; color:#2a2a2a; line-height:1.5; white-space:pre-line; }
   #modal .sub{ font-size:11px; font-weight:400; color:#777; margin-top:4px; }
   #modal.single .no{ display:none; }
+  .badge{ flex:none; font-size:12px; line-height:1; font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif; }
+  .badge.mine{ cursor:pointer; border-radius:3px; padding:1px; }
+  .badge.mine:hover{ background:rgba(255,255,255,.8); }
+  #pick, #help{ position:fixed; inset:0; background:rgba(0,0,0,.28); display:none; align-items:center; justify-content:center; z-index:12; }
+  #pick.on, #help.on{ display:flex; }
+  #pick .box{ width:244px; background:#fff; border-radius:6px; padding:14px; box-shadow:0 6px 24px rgba(0,0,0,.18); text-align:center; }
+  #pick .cap{ font-size:12px; font-weight:700; color:#333; margin-bottom:10px; }
+  #pick .grid{ display:grid; grid-template-columns:repeat(5, 1fr); gap:4px; }
+  #pick .grid button{ height:38px; border:1px solid transparent; border-radius:4px; background:none; cursor:pointer; font-size:21px; line-height:1;
+    font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif; }
+  #pick .grid button:hover{ background:#f6f6f6; }
+  #pick .grid button.sel{ border-color:var(--acc); background:#fff; }
+  #help .box{ width:304px; background:#fff; border-radius:6px; padding:16px 16px 10px; box-shadow:0 6px 24px rgba(0,0,0,.18); word-break:keep-all; }
+  #help h3{ font-size:14px; font-weight:700; color:#2a2a2a; text-align:center; margin-bottom:10px; }
+  #help ol{ padding-left:17px; }
+  #help li{ font-size:11.5px; line-height:1.6; color:#444; margin-bottom:5px; }
+  #help li b{ color:#222; font-weight:700; }
+  #help .close{ display:block; margin:6px auto 0; border:0; background:none; color:#999; font:inherit; font-size:11.5px; cursor:pointer; }
+  #help .close:hover{ color:#555; }
   #dayModal{ position:fixed; inset:0; background:rgba(0,0,0,.28); display:none; align-items:center; justify-content:center; z-index:11; }
   #dayModal.on{ display:flex; }
   #dayModal .box{ width:276px; background:#fff; border-radius:6px; padding:18px 18px 12px; box-shadow:0 6px 24px rgba(0,0,0,.18);
@@ -147,6 +166,8 @@
     <div class="nick" id="nick" title="클릭해서 닉네임을 변경합니다."></div>
     <button class="cyc" id="bCyc" title="시작 시간을 변경하고 싶으면 누릅니다. 참가자 중 한 사람만 누릅니다.">지금 시작</button>
     <div class="icons">
+      <button class="ib" id="bHelp" title="사용법을 봅니다.">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.4a1.8 1.8 0 1 1 2.5 1.6c-.5.2-.8.6-.8 1.1v.4"/><circle cx="8" cy="11.4" r=".35" fill="currentColor"/></svg></button>
       <button class="ib" id="bPin" title="고정 기능을 켜거나 끕니다.">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6 2h4l-.6 4 2.6 2.5H4L6.6 6z"/><path d="M8 8.5V14" stroke-linecap="round"/></svg></button>
       <button class="ib" id="bBell" title="알람음을 켜거나 끕니다.">
@@ -187,6 +208,21 @@
     <div id="list"></div>
   </div>
 </div>
+<div id="pick"><div class="box"><div class="cap">어제 1위 표시를 골라 주세요</div><div class="grid" id="pickGrid"></div></div></div>
+<div id="help"><div class="box">
+  <h3>사용법</h3>
+  <ol>
+    <li>왼쪽 위 <b>닉네임</b>을 눌러 닉네임을 정합니다.</li>
+    <li>할 일은 <b>글자수 기록</b>뿐입니다. '지금 시작'은 누르지 않아도 됩니다.</li>
+    <li><b>시작 글자수</b>는 하루 한 번, 아무 때나 입력합니다.<br><b>진행 글자수</b>는 세션이 끝난 뒤 원고 전체 글자수를 입력합니다. 휴식 10분 + 다음 집중 5분, 15분 동안만 열립니다. 함께 쓰는 느낌을 위해 시간을 제한했어요.</li>
+    <li><b>공용 타이머</b>는 매시 00~50분 집중, 50~00분 휴식입니다.</li>
+    <li><b>'지금 시작'</b>을 누르면 모두의 집중이 그때부터 시작됩니다. 참여자끼리 상의한 뒤 한 사람만 누릅니다. 원래대로 돌리려면 같은 자리의 <b>'정시 시작'</b>을, 시간을 다시 바꾸려면 '정시 시작' → '지금 시작'을 누릅니다.</li>
+    <li>오른쪽 위 <b>∨</b>를 누르면 오늘 기록이 펼쳐집니다. 내 기록을 <b>더블클릭</b>하면 고칠 수 있습니다. 오늘 합산 1등 앞에는 <b>1</b>, 어제 1등 뒤에는 <b>🏅</b>가 붙고, 내 🏅를 더블클릭하면 다른 이모지로 바꿀 수 있습니다.</li>
+    <li><b>오전 5시</b>에 새 날이 시작됩니다. 그 전의 새벽 작업은 전날 기록입니다.</li>
+    <li>그 밖의 문의는 제작자에게 해 주세요.</li>
+  </ol>
+  <button class="close" id="helpClose">닫기</button>
+</div></div>
 <div id="dayModal"><div class="box">
   <h3>날짜가 바뀌고 집중 세션이 시작됐어요.</h3>
   <div class="sec" id="dSecNow"><div class="cap">직전 세션의 글자수를 입력하지 못했다면</div>
@@ -211,6 +247,8 @@ const st = {
 };
 let pw = st.get('pw', ''), nick = st.get('nick', '');
 let pin = st.get('pin', false), bell = st.get('bell', true), open = st.get('open', false);
+let badges = new Map();
+const EMOJI = ['🏅','🥇','🍅','👑','🏆','🌟','🍓','🍒','🍑','🧁','🍩','🍀','🌸','🔥','🐣','🐰','🐱','🐻','🦊','🐸'];
 let mode = 'count', rows = [], offset = 0, lastPhase = null, lastSec = null, editingRow = null;
 
 /* ---------- 창 제어(exe가 처리) ---------- */
@@ -368,7 +406,8 @@ async function load(){
   if (!pw) return;
   try{
     const since = dayFrom(now()) - DAY;   // 전날 1등 계산용으로 어제부터
-    const [res, cyc] = await Promise.all([rpc('pmpm_list', { pw, since: isoOf(since) }), rpc('pmpm_cycle_get', { pw })]);
+    const [res, cyc, bd] = await Promise.all([rpc('pmpm_list', { pw, since: isoOf(since) }), rpc('pmpm_cycle_get', { pw }), rpc('pmpm_badge_list', { pw }).catch(() => null)]);
+    if (bd) badges = new Map(bd.map(b => [b.nick, b.emoji]));
     applyCycle(cyc && cyc[0]);
     loaded = true;
     rows = res.map(r => ({ nick: r.nick, slot: Date.parse(r.slot_start), start: r.start_count, end: r.end_count }));
@@ -430,7 +469,6 @@ function renderSession(){
   $('tDay').textContent = mode === 'count' ? (day < 0 ? '(' + Math.abs(day).toLocaleString('ko-KR') + ')' : day.toLocaleString('ko-KR')) : '';
 }
 
-const MEDAL = '<svg class="medal" viewBox="0 0 12 14"><path d="M3 0h2.4L7 4 5.6 5.2zM9 0H6.6L5 4l1.4 1.2z" fill="#5b7bd5"/><circle cx="6" cy="9" r="4.2" fill="#e8b638" stroke="#b98a14" stroke-width=".8"/><path d="M6 6.9l.6 1.3 1.4.1-1.1.9.4 1.4L6 9.8l-1.3.8.4-1.4-1.1-.9 1.4-.1z" fill="#fff6d6"/></svg>';
 function topOf(list){
   const tot = new Map();
   list.forEach(r => tot.set(r.nick, (tot.get(r.nick) || 0) + r.end - r.start));
@@ -452,11 +490,23 @@ function renderList(){
   const box = $('list'), keep = box.scrollTop;
   box.innerHTML = '';
   if (!today.length){ box.innerHTML = '<div class="empty">오늘은 아직 기록이 없어요</div>'; }
+  // 시작값만 넣은 줄: 그 뒤 기록이 있으면 숨기고, 아직 기다리는 사람만 '대기 중'에 표시
+  const first = new Map();
+  [...today].sort((a, b) => a.slot - b.slot).forEach(r => { if (!first.has(r.nick)) first.set(r.nick, r); });
+  const many = n => today.filter(r => r.nick === n).length > 1;
+  const isStart = r => first.get(r.nick) === r && r.start === r.end;
   const groups = new Map();
-  today.forEach(r => { if (!groups.has(r.slot)) groups.set(r.slot, []); groups.get(r.slot).push(r); });
-  [...groups.keys()].sort((a, b) => b - a).forEach(slot => {
+  today.forEach(r => {
+    if (isStart(r) && many(r.nick)) return;
+    const k = isStart(r) ? 'wait' : r.slot;
+    if (!groups.has(k)) groups.set(k, []); groups.get(k).push(r);
+  });
+  const keys = [...groups.keys()].filter(k => k !== 'wait').sort((a, b) => b - a);
+  if (groups.has('wait')) keys.unshift('wait');
+  keys.forEach(slot => {
     const g = document.createElement('div');
-    g.className = 'g'; g.textContent = hm(slot) + ' 세션';
+    g.className = 'g'; g.textContent = slot === 'wait' ? '대기 중' : hm(slot) + ' 세션';
+    if (slot === 'wait') g.title = '시작 글자수만 입력한 사람입니다.';
     box.append(g);
     groups.get(slot).sort((a, b) => (b.end - b.start) - (a.end - a.start)).forEach(r => {
       const el = document.createElement('div');
@@ -465,9 +515,16 @@ function renderList(){
       const n = document.createElement('span'); n.className = 'n';
       if (r.nick === king) n.insertAdjacentHTML('beforeend', '<span class="one" title="오늘 현재 1위입니다.">1</span>');
       const t = document.createElement('span'); t.className = 't'; t.textContent = r.nick; n.append(t);
-      if (r.nick === champ) n.insertAdjacentHTML('beforeend', '<span title="어제 1위입니다." style="display:flex">' + MEDAL + '</span>');
+      if (r.nick === champ){
+        const b = document.createElement('span');
+        b.className = 'badge' + (r.nick === nick ? ' mine' : '');
+        b.textContent = badges.get(r.nick) || '🏅';
+        b.title = r.nick === nick ? '어제 1위입니다. 더블클릭해서 이모지를 바꿀 수 있습니다.' : '어제 1위입니다.';
+        if (r.nick === nick) b.addEventListener('dblclick', e => { e.stopPropagation(); openPick(); });
+        n.append(b);
+      }
       el.append(n);
-      const only = r.start === r.end;
+      const only = isStart(r);
       [[num(r.start), 'v'], [only ? '–' : num(r.end), only ? 'v na' : 'v'], [only ? '–' : sgn(r.end - r.start), only ? 'v na w' : 'v d w'], [sgn(cum.get(r.nick + '|' + r.slot)), 'v s']].forEach(([txt, c]) => {
         const s = document.createElement('span'); s.className = c; s.textContent = txt; el.append(s);
       });
@@ -613,8 +670,8 @@ function dayCheck(t){
 // 창이 작아서 안내창이 잘리지 않게, 떠 있는 동안 창을 늘림
 function dayFit(){
   requestAnimationFrame(() => {
-    const on = $('dayModal').classList.contains('on');
-    $('app').style.minHeight = on ? ($('dayModal').querySelector('.box').offsetHeight + 28) + 'px' : '';
+    const ov = ['dayModal', 'help', 'pick'].map($).find(x => x.classList.contains('on'));
+    $('app').style.minHeight = ov ? (ov.querySelector('.box').offsetHeight + 28) + 'px' : '';
     fit(true);
   });
 }
@@ -650,6 +707,26 @@ $('dAsk').addEventListener('submit', async e => {
   }catch(err){ if (err.message !== 'pw') flash('저장 실패'); }
 });
 $('dInp').addEventListener('keydown', e => { if (e.key === 'Escape'){ e.preventDefault(); $('dayModal').classList.remove('asking'); dayFit(); } });
+
+function openPick(){
+  const cur = badges.get(nick) || '🏅', grid = $('pickGrid');
+  grid.innerHTML = '';
+  EMOJI.forEach(e => {
+    const b = document.createElement('button'); b.textContent = e; if (e === cur) b.className = 'sel';
+    b.onclick = async () => {
+      $('pick').classList.remove('on'); dayFit();
+      try{ await rpc('pmpm_badge_set', { pw, p_nick: nick, p_emoji: e }); badges.set(nick, e); renderList(); }
+      catch(err){ if (err.message !== 'pw') flash('바꾸지 못했어요'); }
+    };
+    grid.append(b);
+  });
+  $('pick').classList.add('on'); dayFit();
+}
+$('pick').onclick = e => { if (e.target === $('pick')){ $('pick').classList.remove('on'); dayFit(); } };
+$('bHelp').onclick = () => { $('help').classList.add('on'); dayFit(); };
+$('helpClose').onclick = () => { $('help').classList.remove('on'); dayFit(); };
+$('help').onclick = e => { if (e.target === $('help')){ $('help').classList.remove('on'); dayFit(); } };
+document.addEventListener('keydown', e => { if (e.key === 'Escape') ['help', 'pick'].forEach(id => { if ($(id).classList.contains('on')){ $(id).classList.remove('on'); dayFit(); } }); });
 
 $('bCyc').onclick = async () => {
   if (mode === 'pw') return;
