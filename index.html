@@ -44,21 +44,20 @@
   #modal.single .no{ display:none; }
   #dayModal{ position:fixed; inset:0; background:rgba(0,0,0,.28); display:none; align-items:center; justify-content:center; z-index:11; }
   #dayModal.on{ display:flex; }
-  #dayModal .box{ width:296px; background:#fff; border-radius:6px; padding:16px; box-shadow:0 6px 24px rgba(0,0,0,.18); word-break:keep-all; }
-  #dayModal h3{ font-size:13.5px; font-weight:700; color:#2a2a2a; margin-bottom:8px; }
-  #dayModal .how{ font-size:11.5px; color:#666; line-height:1.6; }
-  #dayModal .how b{ color:#2a2a2a; font-weight:600; }
-  #dayModal .opts{ display:flex; flex-direction:column; gap:6px; margin-top:12px; }
-  #dayModal .opts button{ height:32px; border:1px solid var(--soft); border-radius:3px; background:#fff; color:var(--ink);
-    font:inherit; font-size:12px; font-weight:700; cursor:pointer; }
-  #dayModal .opts button:hover{ border-color:var(--acc); color:var(--acc); }
-  #dayModal .ask{ display:none; margin-top:12px; }
-  #dayModal.asking .opts, #dayModal.asking .how{ display:none; }
+  #dayModal .box{ width:276px; background:#fff; border-radius:6px; padding:18px 18px 12px; box-shadow:0 6px 24px rgba(0,0,0,.18);
+    word-break:keep-all; text-align:center; }
+  #dayModal h3{ font-size:14px; font-weight:700; color:#2a2a2a; line-height:1.4; }
+  #dayModal .sec{ margin-top:14px; }
+  #dayModal .cap{ font-size:11.5px; color:#777; margin-bottom:6px; }
+  #dayModal .sec button{ width:100%; height:34px; border:1px solid var(--soft); border-radius:3px; background:#fff; color:var(--ink);
+    font:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+  #dayModal .sec button:hover{ border-color:var(--acc); color:var(--acc); }
+  #dayModal .ask{ display:none; margin-top:14px; }
+  #dayModal.asking .sec{ display:none; }
   #dayModal.asking .ask{ display:block; }
-  #dayModal .ask label{ display:block; font-size:12px; font-weight:600; color:#444; margin-bottom:6px; }
-  #dayModal .ask input{ width:100%; height:32px; border:1px solid var(--acc); border-radius:3px; padding:0 9px; font:inherit; font-size:13px;
-    font-weight:600; outline:none; font-variant-numeric:tabular-nums; user-select:text; }
-  #dayModal .later{ display:block; margin:10px auto 0; border:0; background:none; color:#999; font:inherit; font-size:11px; cursor:pointer; }
+  #dayModal .ask input{ width:100%; height:34px; border:1px solid var(--acc); border-radius:3px; padding:0 9px; font:inherit; font-size:13px;
+    font-weight:700; text-align:center; outline:none; font-variant-numeric:tabular-nums; user-select:text; }
+  #dayModal .later{ display:inline-block; margin-top:12px; border:0; background:none; color:#999; font:inherit; font-size:11.5px; cursor:pointer; }
   #dayModal .later:hover{ color:#555; }
   #modal .btns{ display:flex; justify-content:flex-end; gap:6px; margin-top:14px; }
   #modal button{ height:28px; padding:0 12px; border-radius:3px; font:inherit; font-size:12px; font-weight:700; cursor:pointer; }
@@ -189,15 +188,13 @@
   </div>
 </div>
 <div id="dayModal"><div class="box">
-  <h3>지금부터 날짜가 바뀌고 정시 집중 세션이 시작돼요.</h3>
-  <div class="how" id="dHow"></div>
-  <div class="opts">
-    <button id="dNow" title="어제 끊긴 세션의 끝 글자수로 저장하고, 같은 값을 오늘 시작 글자수로도 씁니다.">현재 글자수 입력하기</button>
-    <button id="dYest" title="어제 마지막으로 입력한 글자수를 오늘 시작 글자수로 씁니다.">어제 글자수 가져오기</button>
-    <button id="dNew" title="어제 기록과 상관없이 오늘 시작 글자수를 새로 입력합니다.">시작 글자수 입력하기</button>
-  </div>
-  <form class="ask" id="dAsk" autocomplete="off"><label id="dLabel"></label><input id="dInp" inputmode="numeric" spellcheck="false"></form>
-  <button class="later" id="dLater" title="창을 닫습니다. 시작 글자수는 아래 입력칸에서 넣을 수 있습니다.">나중에 할게요</button>
+  <h3>날짜가 바뀌고 집중 세션이 시작됐어요.</h3>
+  <div class="sec" id="dSecNow"><div class="cap">직전 세션의 글자수를 입력하지 못했다면</div>
+    <button id="dNow" title="어제 마지막 세션의 끝 글자수로 저장합니다.">현재 글자수 입력하기</button></div>
+  <div class="sec"><div class="cap">오늘의 시작 글자수를 입력하려면</div>
+    <button id="dNew" title="오늘의 시작 글자수를 입력합니다. 어제 마지막 글자수가 미리 채워집니다.">시작 글자수 입력하기</button></div>
+  <form class="ask" id="dAsk" autocomplete="off"><div class="cap" id="dLabel"></div><input id="dInp" inputmode="numeric" spellcheck="false"></form>
+  <button class="later" id="dLater" title="창을 닫습니다. 시작 글자수는 아래 입력칸에서 넣을 수 있습니다.">알아서 할게요</button>
 </div></div>
 <div id="modal"><div class="box"><p id="mText"></p><p class="sub" id="mSub"></p><div class="btns"><button class="no" id="mNo">취소</button><button class="yes" id="mYes">확인</button></div></div></div>
 <script>
@@ -236,7 +233,7 @@ function fit(force){
 const now = () => Date.now() + offset;
 let cycOff = 0, anchor = null, cycAt = null;   // 공용 사이클 기준(null = 정시)
 const slotOf = t => Math.floor((t - cycOff) / PERIOD) * PERIOD + cycOff;
-const DB = 5 * 3600e3;   // 날짜 기준: 오전 5시(이때 모든 세션이 끊기고 정시 집중 시작)
+const HOUR = 3600e3, DB = 5 * HOUR;   // 날짜 기준: 오전 5시(이때 모든 세션이 끊기고 정시 집중 시작)
 const dayStart = t => Math.floor((t + KST - DB) / DAY) * DAY - KST + DB;
 const dayFrom = t => dayStart(t);
 const hm = t => { const d = new Date(t + KST); return String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0'); };
@@ -291,9 +288,7 @@ function tick(){
   const left = (focus ? FOCUS : PERIOD) - into, ls = Math.ceil(left / 1000);
   const sec = Math.floor(t / 1000);
   if (sec !== lastSec){
-    const d = dayStart(t);
-    if (tick.day !== undefined && d !== tick.day) dayChanged(slotOf(t - 1000), d);   // 사이클 바뀌기 전 직전 세션
-    tick.day = d;
+    dayCheck(t);
     if (effAnchor() !== anchor) setAnchor(effAnchor(), false);
     hands(t);
     const m0 = ((slot + KST) / MIN) % 60;   // 세션 시작 분(정시면 0)
@@ -375,6 +370,7 @@ async function load(){
     const since = dayFrom(now()) - DAY;   // 전날 1등 계산용으로 어제부터
     const [res, cyc] = await Promise.all([rpc('pmpm_list', { pw, since: isoOf(since) }), rpc('pmpm_cycle_get', { pw })]);
     applyCycle(cyc && cyc[0]);
+    loaded = true;
     rows = res.map(r => ({ nick: r.nick, slot: Date.parse(r.slot_start), start: r.start_count, end: r.end_count }));
     renderSession(); renderList();
   }catch(e){ if (e.message !== 'pw') flash('연결 안 됨'); }
@@ -594,19 +590,22 @@ function ask(text, sub, single){
     $('mYes').focus();
   });
 }
-// 오전 5시: 날짜가 바뀌면 진행 중이던 세션은 끊기고 정시 집중 시작
-let dayCtx = null;
-function dayChanged(prevSlot, d0){
-  if (mode !== 'count' || !nick) return;
+// 오전 5시: 날짜가 바뀌면 진행 중이던 세션은 끊기고 정시 집중 시작.
+// 5시~6시 사이에 앱이 열려 있으면(또는 열면) 하루 한 번 안내창.
+let dayCtx = null, loaded = false;
+function dayCheck(t){
+  if (!loaded || mode !== 'count' || !nick || $('dayModal').classList.contains('on') || $('modal').classList.contains('on')) return;
+  const d0 = dayStart(t);
+  if (t - d0 >= HOUR || st.get('dayShown', 0) === d0) return;
+  if (myRows().some(r => r.slot >= d0)) return;              // 이미 오늘 시작값이 있음
+  st.set('dayShown', d0);
   const y = myRows().filter(r => r.slot >= d0 - DAY && r.slot < d0).sort((a, b) => a.slot - b.slot);
-  if (myRows().some(r => r.slot >= d0)) return;            // 이미 오늘 시작값이 있음
-  dayCtx = { prevSlot, d0, y, last: y.length ? y[y.length - 1].end : null };
-  const has = y.length > 0;
-  $('dNow').style.display = has ? '' : 'none';
-  $('dYest').style.display = has ? '' : 'none';
-  $('dHow').innerHTML = has
-    ? '진행 중이던 세션의 글자수를 입력하지 못했다면 <b>현재 글자수 입력하기</b>를 눌러 주세요.<br>어제의 마지막 글자수를 가져오고 싶다면 <b>어제 글자수 가져오기</b>를 눌러 주세요.<br>어제 기록과 상관없이 시작하고 싶다면 <b>시작 글자수 입력하기</b>를 눌러 주세요.'
-    : '오늘의 시작 글자수를 입력해 주세요.';
+  // 어제 마지막 세션(그때의 사이클 기준)
+  const off = anchorRaw !== null && anchorRaw >= d0 - DAY && anchorRaw < d0 ? ((anchorRaw % PERIOD) + PERIOD) % PERIOD : 0;
+  const prevSlot = Math.floor((d0 - 1000 - off) / PERIOD) * PERIOD + off;
+  const pr = y.find(r => r.slot === prevSlot);
+  dayCtx = { d0, y, prevSlot, last: y.length ? y[y.length - 1].end : null };
+  $('dSecNow').style.display = y.length && !(pr && pr.end !== pr.start) ? '' : 'none';
   $('dayModal').classList.remove('asking');
   $('dayModal').classList.add('on');
   dayFit();
@@ -619,18 +618,17 @@ function dayFit(){
     fit(true);
   });
 }
-function dayAsk(kind){
+function dayAsk(kind, val){
   dayCtx.kind = kind;
-  $('dLabel').textContent = kind === 'now' ? '지금 원고의 전체 글자수를 입력하세요.' : kind === 'yest' ? '어제 마지막 글자수예요. 맞으면 엔터를 누르세요.' : '오늘의 시작 글자수를 입력하세요.';
-  $('dInp').value = kind === 'yest' && dayCtx.last !== null ? num(dayCtx.last) : '';
+  $('dLabel').textContent = kind === 'now' ? '지금 원고의 전체 글자수를 입력하세요.' : '오늘의 시작 글자수를 입력하세요.';
+  $('dInp').value = val != null ? num(val) : '';
   $('dayModal').classList.add('asking');
   $('dInp').focus(); $('dInp').select();
   dayFit();
 }
 function dayClose(){ $('dayModal').classList.remove('on', 'asking'); dayCtx = null; dayFit(); }
 $('dNow').onclick = () => dayAsk('now');
-$('dYest').onclick = () => dayAsk('yest');
-$('dNew').onclick = () => dayAsk('new');
+$('dNew').onclick = () => dayAsk('new', dayCtx.last);
 $('dLater').onclick = dayClose;
 $('dAsk').addEventListener('submit', async e => {
   e.preventDefault();
@@ -638,13 +636,15 @@ $('dAsk').addEventListener('submit', async e => {
   if (isNaN(n) || !dayCtx) return;
   const c = dayCtx;
   try{
-    if (c.kind === 'now' && c.y.length){
-      // 어제 끊긴 세션의 끝값으로 저장(시작값은 어제 흐름에서 이어받음)
+    if (c.kind === 'now'){
+      // 어제 끊긴 세션의 끝값으로 저장(시작값은 어제 흐름에서 이어받음) → 이어서 시작값 입력
       const r = c.y.find(x => x.slot === c.prevSlot), prev = c.y.filter(x => x.slot < c.prevSlot).pop();
-      const s0 = r ? r.start : prev ? prev.end : c.y[0].start;
-      await put(c.prevSlot, s0, n);
+      await put(c.prevSlot, r ? r.start : prev ? prev.end : c.y[0].start, n);
+      c.last = n; await load();
+      dayAsk('new', n);
+      return;
     }
-    await put(c.d0, n, n);   // 오늘 시작값(05:00 세션)
+    await put(c.d0, n, n);   // 오늘 시작값(5시 세션)
     dayClose(); await load();
     flash('오늘 시작 글자수를 저장했어요');
   }catch(err){ if (err.message !== 'pw') flash('저장 실패'); }
